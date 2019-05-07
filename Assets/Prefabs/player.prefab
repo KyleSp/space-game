@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 4941999806071742047}
   - component: {fileID: 8494013216214901653}
   m_Layer: 0
-  m_Name: player
+  m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -126,6 +126,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 5
+  shipSpeed: 10
+  shipRotateSpeed: 2
 --- !u!114 &8494013216214901653
 MonoBehaviour:
   m_ObjectHideFlags: 0

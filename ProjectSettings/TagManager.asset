@@ -9,6 +9,12 @@ TagManager:
   - Bed
   - Toilet
   - Shower
+  - Engine
+  - Weapon
+  - WarpCore
+  - Crate
+  - Sensor
+  - Airlock
   layers:
   - Default
   - TransparentFX

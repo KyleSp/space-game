@@ -6,19 +6,20 @@ using UnityEngine.UI;
 public class UIScript : MonoBehaviour
 {
     public GameObject healthText;
+    private GameObject player;
+    private GameObject playerShip;
     private Health playerHealth;
 
     public GameObject controlPanel;
-    public float cooldownDuration = 0.3f;
-    private float cooldown;
 
     private bool controlPanelActive = false;
+    private bool playerControllingShip = false;
 
     void Start()
     {
-        playerHealth = GameObject.Find("player").GetComponent<Health>();
-
-        cooldown = Time.time - cooldownDuration;
+        player = GameObject.Find("Player");
+        playerShip = GameObject.Find("Ship");
+        playerHealth = player.GetComponent<Health>();
     }
 
     void Update()
@@ -28,19 +29,28 @@ public class UIScript : MonoBehaviour
 
     public void ControlPanelToggle()
     {
-        if (Time.time < cooldown + cooldownDuration) return;
-
         controlPanelActive = !controlPanelActive;
         controlPanel.SetActive(controlPanelActive);
-
-        cooldown = Time.time;
     }
 
     public void ControlPanelClose()
     {
         controlPanelActive = false;
         controlPanel.SetActive(controlPanelActive);
+    }
 
-        cooldown = Time.time;
+    public void ToggleShipControl()
+    {
+        PlayerInput playerInput = player.GetComponent<PlayerInput>();
+        if (playerControllingShip)
+        {
+            playerInput.StopShipControl();
+        } else
+        {
+            playerInput.StartShipControl(playerShip);
+            ControlPanelClose();
+        }
+
+        playerControllingShip = !playerControllingShip;
     }
 }

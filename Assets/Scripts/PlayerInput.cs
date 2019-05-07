@@ -6,12 +6,16 @@ public class PlayerInput : MonoBehaviour
 {
     public float speed;
 
-    private Rigidbody rb;
+    private Rigidbody playerRb;
     private UIScript uiScript;
+
+    private bool controllingShip = false;
+    private GameObject controlledShip = null;
+    private Rigidbody controlledShipRb = null;
 
     void Start()
     {
-        rb = GetComponent<Rigidbody>();
+        playerRb = GetComponent<Rigidbody>();
         uiScript = GameObject.Find("Canvas").GetComponent<UIScript>();
     }
 
@@ -40,12 +44,36 @@ public class PlayerInput : MonoBehaviour
             uiScript.ControlPanelClose();
         }
 
-        rb.velocity = speed * direction;
+        if (controllingShip)
+        {
+            controlledShip.GetComponent<ShipManager>().ControlShip(direction);
+            // TODO: move/rotate player with respect to ship (maybe also rotate camera as well)
+        } else
+        {
+            playerRb.velocity = speed * direction;
+        }
+    }
+
+    public void StartShipControl(GameObject ship)
+    {
+        Debug.Log("start ship control");
+        controllingShip = true;
+        controlledShip = ship;
+        controlledShipRb = ship.GetComponent<Rigidbody>();
+        controlledShipRb.isKinematic = false;
+    }
+
+    public void StopShipControl()
+    {
+        Debug.Log("stop ship control");
+        controllingShip = false;
+        controlledShip = null;
+        controlledShipRb = null;
     }
 
     private void CollisionHandler(Collision collision)
     {
-        if (Input.GetKey(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             if (collision.collider.CompareTag("Door"))
             {
@@ -61,7 +89,7 @@ public class PlayerInput : MonoBehaviour
 
     private void TriggerHandler(Collider other)
     {
-        if (Input.GetKey(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             if (other.CompareTag("Door"))
             {

@@ -50,8 +50,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   doorOpenSprite: {fileID: 21300000, guid: b1b084acdc11d4c4f949be83da7085b9, type: 3}
   doorCloseSprite: {fileID: 21300000, guid: 9f313a247dbf21641bf8ce895f5dc93d, type: 3}
-  cooldownDuration: 0.3
-  autoCloseCooldown: 3
+  cooldownDuration: 0
+  autoCloseCooldown: 1.5
   colliderClosed: {fileID: 2457123566565044401}
   colliderOpened1: {fileID: 701110324022900006}
   colliderOpened2: {fileID: 6563112553311029318}

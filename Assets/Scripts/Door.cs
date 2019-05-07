@@ -6,21 +6,17 @@ public class Door : MonoBehaviour
 {
     public Sprite doorOpenSprite;
     public Sprite doorCloseSprite;
-    public float cooldownDuration = 0.3f;
-    public float autoCloseCooldown = 3.0f;
+    public float autoCloseCooldown;
 
     public Collider colliderClosed;
     public Collider colliderOpened1;
     public Collider colliderOpened2;
 
     private bool open = false;
-    private float cooldown;
     private List<SpriteRenderer> spriteRenderers = new List<SpriteRenderer>();
 
     void Start()
     {
-        cooldown = Time.time - cooldownDuration;
-
         foreach (Transform childTransform in transform)
         {
             spriteRenderers.Add(childTransform.GetComponent<SpriteRenderer>());
@@ -34,19 +30,16 @@ public class Door : MonoBehaviour
 
     public void Toggle()
     {
-        if (Time.time < cooldown + cooldownDuration) return;
-
         if (open)
         {
+            open = !open;
             Close();
         }
         else
         {
+            open = !open;
             Open();
         }
-
-        open = !open;
-        cooldown = Time.time;
     }
 
     private void Close()
@@ -72,15 +65,26 @@ public class Door : MonoBehaviour
         colliderOpened1.enabled = true;
         colliderOpened2.enabled = true;
 
-        // TODO: make sure coroutine stops, if it was running already
-        StopCoroutine(AutoClose());
         StartCoroutine(AutoClose());
     }
 
     private IEnumerator AutoClose()
     {
-        yield return new WaitForSeconds(3.0f);
-        if (open) Close();
+        int numStepsPerSec = 10;
+        float timeToWait = autoCloseCooldown / numStepsPerSec;
+        bool closeDoor = true;
+        for (int i = 0; i < (int) (autoCloseCooldown * numStepsPerSec); ++i)
+        {
+            if (!open) {
+                closeDoor = false;
+                break;
+            }
+            yield return new WaitForSeconds(timeToWait);
+        }
+        if (open && closeDoor) {
+            open = false;
+            Close();
+        }
         yield return null;
     }
 }
