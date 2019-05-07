@@ -7,18 +7,15 @@ public class UIScript : MonoBehaviour
 {
     public GameObject healthText;
     private GameObject player;
-    private GameObject playerShip;
     private Health playerHealth;
 
     public GameObject controlPanel;
 
     private bool controlPanelActive = false;
-    private bool playerControllingShip = false;
 
     void Start()
     {
         player = GameObject.Find("Player");
-        playerShip = GameObject.Find("Ship");
         playerHealth = player.GetComponent<Health>();
     }
 
@@ -42,15 +39,7 @@ public class UIScript : MonoBehaviour
     public void ToggleShipControl()
     {
         PlayerInput playerInput = player.GetComponent<PlayerInput>();
-        if (playerControllingShip)
-        {
-            playerInput.StopShipControl();
-        } else
-        {
-            playerInput.StartShipControl(playerShip);
-            ControlPanelClose();
-        }
-
-        playerControllingShip = !playerControllingShip;
+        playerInput.StartShipControl(player.transform.parent.gameObject);
+        ControlPanelClose();
     }
 }

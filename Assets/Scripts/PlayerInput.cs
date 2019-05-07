@@ -12,6 +12,8 @@ public class PlayerInput : MonoBehaviour
     private bool controllingShip = false;
     private GameObject controlledShip = null;
     private Rigidbody controlledShipRb = null;
+    private Vector3 initialPlayerPosition = Vector3.zero;
+    private float initialPlayerRotation = 0.0f;
 
     void Start()
     {
@@ -47,7 +49,11 @@ public class PlayerInput : MonoBehaviour
         if (controllingShip)
         {
             controlledShip.GetComponent<ShipManager>().ControlShip(direction);
-            // TODO: move/rotate player with respect to ship (maybe also rotate camera as well)
+
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                StopShipControl();
+            }
         } else
         {
             playerRb.velocity = speed * direction;
@@ -56,19 +62,39 @@ public class PlayerInput : MonoBehaviour
 
     public void StartShipControl(GameObject ship)
     {
-        Debug.Log("start ship control");
         controllingShip = true;
         controlledShip = ship;
         controlledShipRb = ship.GetComponent<Rigidbody>();
         controlledShipRb.isKinematic = false;
+        playerRb.isKinematic = true;
+        GetComponent<Collider>().enabled = false;
+        initialPlayerPosition = playerRb.position;
+        initialPlayerRotation = controlledShipRb.rotation.eulerAngles.z;
     }
 
     public void StopShipControl()
     {
-        Debug.Log("stop ship control");
+        // playerRb.position = controlledShipRb.position + initialPlayerPosition;
+        float shipAngle = controlledShipRb.rotation.eulerAngles.z;
+        float deltaAngle = initialPlayerRotation + shipAngle;
+        // [A B] [x]   [Ax + By]   [cos(theta)*x - sin(theta)*y]
+        // [C D] [y] = [Cx + Dy] = [sin(theta)*x + cos(theta)*y]
+
+        float angle = Mathf.Deg2Rad * deltaAngle;
+        float newX = Mathf.Cos(angle) * initialPlayerPosition.x - Mathf.Sin(angle) * initialPlayerPosition.y;
+        float newY = Mathf.Sin(angle) * initialPlayerPosition.x + Mathf.Cos(angle) * initialPlayerPosition.y;
+        Vector3 rotatedVector = new Vector3(newX, newY, 0);
+        playerRb.position = controlledShipRb.position + rotatedVector;
+
+        initialPlayerPosition = Vector3.zero;
+        initialPlayerRotation = 0.0f;
+
+        controlledShipRb.isKinematic = true;
+        playerRb.isKinematic = false;
         controllingShip = false;
         controlledShip = null;
         controlledShipRb = null;
+        GetComponent<Collider>().enabled = true;
     }
 
     private void CollisionHandler(Collision collision)

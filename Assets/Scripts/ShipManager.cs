@@ -119,12 +119,12 @@ public class ShipManager : MonoBehaviour
 
     public void ControlShip(Vector2 input)
     {
-        rb.angularVelocity = shipRotateSpeed * new Vector3(0, 0, -input.x);
+        rb.angularVelocity += shipRotateSpeed / 100 * new Vector3(0, 0, -input.x);
 
         Vector3 angle = rb.rotation.eulerAngles;
         float x = input.y * Mathf.Cos(Mathf.Deg2Rad * angle.z);
         float y = input.y * Mathf.Sin(Mathf.Deg2Rad * angle.z);
-        rb.velocity = shipSpeed * new Vector3(x, y, 0);
+        rb.velocity += shipSpeed / 100 * new Vector3(x, y, 0);
     }
 
     /*
